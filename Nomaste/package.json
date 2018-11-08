@@ -1,0 +1,31 @@
+{
+  "name": "nomaste",
+  "version": "1.0.0",
+  "description": "Blog app created for CEN4083 by Jeffrey Antoine and Darien Morrison. Uses the cloud for data storage via the NoSQL Database MongoDB.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "C:\\git-repos\\CEN4083"
+  },
+  "author": "Darien Morrison, Jeffrey Antoine",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^6.1.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "getstream": "^3.23.0",
+    "mongodb": "^3.1.9",
+    "mongoose": "^5.3.10",
+    "node-geocoder": "^3.22.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^5.0.1",
+    "request": "^2.88.0"
+  }
+}
