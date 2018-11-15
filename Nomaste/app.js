@@ -12,13 +12,23 @@ var express                 = require("express"),                   // Import Ex
     User                    = require("./models/user"),             // Import User model
     Post                    = require("./models/post"),             // Import Post model
     Comment                 = require("./models/comment");          // Import Comment model
+
+const PORT = 3000;
     
 // Import Routes
 var postRoutes              = require("./routes/posts.js"),
     commentRoutes           = require("./routes/comments.js"),
     indexRoutes             = require("./routes/index.js");
-    
-mongoose.connect("mongodb://localhost/all_posts");      // Connect mongoose to a database named all_posts
+
+// MongoDB Atlas connection 
+var uri = 'mongodb+srv://dmorr041:Sageof6paths@nomaste-ctilj.mongodb.net/Nomaste';  // URI connection string provided by MongoDB Atlas cluster
+mongoose.connect(uri, function(error) {
+    if(error) console.log(error);
+    else console.log('working');
+});      // Connect mongoose to a database named all_posts
+var db = mongoose.connection;
+
+
 app.use(bodyParser.urlencoded({extended:true}));        // Tell app to use bodyParser package
 app.use(methodOverride("_method"));                     // Tell app to use methodOverride package for PUT requests, etc.
 app.use(express.static(__dirname + "/public"));         // Tell app to use main.css
@@ -76,7 +86,7 @@ app.use("/allPosts/:id/comments", commentRoutes);
 
 
 // ================================= SERVER ================================= //
-app.listen(3000, process.env.IP, function(){
-    console.log("Server started..."); 
+app.listen(PORT, process.env.IP, function(){
+    console.log("Server started on port " + PORT + "..."); 
 });
 // ================================= SERVER ================================= //
