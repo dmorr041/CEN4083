@@ -12,6 +12,7 @@ var express                 = require("express"),                   // Import Ex
     User                    = require("./models/user"),             // Import User model
     Post                    = require("./models/post"),             // Import Post model
     Comment                 = require("./models/comment");          // Import Comment model
+    fs                      = require('fs');
 
 const PORT = 3000;
     
