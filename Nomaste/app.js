@@ -12,6 +12,7 @@ var express                 = require("express"),                   // Import Ex
     User                    = require("./models/user"),             // Import User model
     Post                    = require("./models/post"),             // Import Post model
     Comment                 = require("./models/comment");          // Import Comment model
+    fs                      = require('fs');
 
 const PORT = 3000;
     
@@ -34,10 +35,6 @@ app.use(methodOverride("_method"));                     // Tell app to use metho
 app.use(express.static(__dirname + "/public"));         // Tell app to use main.css
 app.set("view engine", "ejs");                          // Set view engine so all files in views render as ejs by default
 app.use(flash());
-
-// Yelp API Key and Client ID
-var api_key = "s50Uld4c1jKVF98wk_0LUJSipvCgdhX_33gRT5FMid4f1QOeY5ZWz50eLtkLr0FOPXyXBpnx8xzNVRCcNZg2HXBWqzdyKrHol2EpJaPjWvVMqHc9uZAahkGHEBsoW3Yx";
-var clientID = "W2GBDO0w8U7lz6WlBzyKCw";
 
 
 // PASSPORT CONFIG
@@ -69,8 +66,6 @@ app.use("/", indexRoutes);
 app.use("/allPosts", postRoutes);
 app.use("/allPosts/:id/comments", commentRoutes);
 // ============================= SETUP ====================================== //
-
-
 
 
 
