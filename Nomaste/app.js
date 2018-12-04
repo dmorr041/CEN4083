@@ -74,7 +74,6 @@ var str = fs.readFileSync('../../yelp_academic_dataset_business.json', 'utf8');
 // Make an array of strings for each line (each json object)
 var strLines = str.split("\n");    
 
-
 var string = fs.readFileSync('../../yelp_academic_dataset_review2.json', 'utf8');
 var stringLines = string.split("\n");
 
@@ -180,18 +179,7 @@ function seedDB() {
             });
         }
     });
-
-    
-
 }
-
-
-
-
-
-
-
-
 
 // ================================= SERVER ================================= //
 app.listen(PORT, process.env.IP, function(){
