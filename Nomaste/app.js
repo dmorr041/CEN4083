@@ -12,7 +12,7 @@ var express                 = require("express"),                   // Import Ex
     User                    = require("./models/user"),             // Import User model
     Post                    = require("./models/post"),             // Import Post model
     Comment                 = require("./models/comment");          // Import Comment model
-    fs                      = require('fs');
+    fs                      = require("fs");
 
 const PORT = 3000;
     
@@ -69,10 +69,31 @@ app.use("/allPosts/:id/comments", commentRoutes);
 
 
 // Read the entire file into a string
-// var str = fs.readFileSync('../../yelp_academic_dataset_business.json', 'utf8');         
+var str = fs.readFileSync('../../yelp_academic_dataset_business.json', 'utf8');         
 
 // Make an array of strings for each line (each json object)
-// var strLines = str.split("\n");     
+var strLines = str.split("\n");    
+
+
+var string = fs.readFileSync('../../yelp_academic_dataset_review2.json', 'utf8');
+var stringLines = string.split("\n");
+
+function scrapeReviews() {
+    var reviews = [];
+
+    stringLines.forEach((element) => {
+        var reviewObj = JSON.parse(element);
+        var review = reviewObj.text;
+        reviews.push(review);
+    });
+
+    return reviews;
+}
+
+var reviews = scrapeReviews();
+// for(var i = 0; i < reviews.length; i++){
+//     console.log(reviews[i]);
+// }
 
 function scrapeRestaurantsFrom(city) {
     var restaurants = [];
@@ -98,60 +119,72 @@ function scrapeRestaurantsFrom(city) {
 }
 
 // List of Phoenix restaurants as JSON objects
-// var PhoenixRestaurants = scrapeRestaurantsFrom('Phoenix');
+var PhoenixRestaurants = scrapeRestaurantsFrom('Phoenix');
 
-// function restaurantsToString(restaurants) {
-//     var restaurants = [];
-//     restaurants.forEach((jsonObject) => {
-//         var restaurantAsString = JSON.stringify(jsonObject);
-//         restaurants += restaurantAsString;
-//     });
-
-//     return restaurants;
-// }
-
-// var rests = restaurantsToString(PhoenixRestaurants);
-
-// console.log(rests);
 
 function seedDB() {
+    
+    User.findOne({ username: 'Darien' }, (err, user) => {
+        if(!user) console.log('no user');
+        else {
+            PhoenixRestaurants.forEach((JSONobject) => {
+                var newPost = {
+                    title: JSONobject.name,
+                    caption: '',
+                    image: 'https://images.pexels.com/photos/359993/pexels-photo-359993.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+                    address: JSONobject.address + ', ' + JSONobject.city + ', ' + JSONobject.state,
+                    name: JSONobject.name,
+                    author: user,
+                    lat: JSONobject.latitude,
+                    lng: JSONobject.longitude
+                };
+        
+                // Create a new Post using the object from above and save to DB
+                Post.create(newPost, function(err, post){
+                    if(err){
+                        // req.flash("error", "Unable to create post.");
+                        console.log('Error creating post');
+                    } 
+                    else{
+                        var j = 0;
+                        for(var i = 0; i < 10; i++){
+                            Comment.create({author: user, text: reviews[j]}, function(err, comment) {
+                                if(err){
+                                    console.log('Error creating comment');
+                                } 
+                                else{
+                                    // Grab the id and username from the post request and store it (associate it) in the comment that is created
+                                    // comment.author.id = user.id;
+                                    // comment.author.username = user.username;
+                                    console.log(comment);
+                                    
+                                    // Save the comment
+                                    comment.save();
+                                    
+                                    post.comments.push(comment);
+                                    
+                                    // req.flash("success", "Comment successfully added.");
+                                    // res.redirect("/allPosts/" + post._id);
+                                    console.log('success adding comment to post with user Darien');
+                                }
+                            });
+                            if(j < reviews.length){
+                                j++;
+                            }
+                            post.save();
+                        }
 
-    var title;
-    var caption;
-    var image;
-    var address;
-    var name;
-    var lat;
-    var long;
-    var author;         // Create a User.js object that is the same for all posts
-    var comments = []   // Create a Comment.js object from the reviews
-
-    PhoenixRestaurants.forEach((JSONobject) => {
-        var newPost = {
-            title: JSONobject.name,
-            caption: '',
-            image: '',
-            address: JSONobject.address + ', ' + JSONobject.city + ', ' + JSONobject.state,
-            name: JSONobject.name,
-            author: null,
-            lat: JSONobject.latitude,
-            lng: JSONobject.longitude
-        };
-
-        // Create a new Post using the object from above and save to DB
-        Post.create(newPost, function(err, post){
-            if(err){
-                // req.flash("error", "Unable to create post.");
-                console.log('Error creating post');
-            } 
-            else{
-                // req.flash("success", "New post successfully added.");
-                console.log('Success, post created');
-            }
-        });
+                        
+                    }
+                });
+            });
+        }
     });
 
+    
+
 }
+
 
 
 
@@ -166,4 +199,4 @@ app.listen(PORT, process.env.IP, function(){
 });
 // ================================= SERVER ================================= //
 
-// seedDB();
+seedDB();
