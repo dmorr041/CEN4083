@@ -68,10 +68,90 @@ app.use("/allPosts/:id/comments", commentRoutes);
 // ============================= SETUP ====================================== //
 
 
+// Read the entire file into a string
+// var str = fs.readFileSync('../../yelp_academic_dataset_business.json', 'utf8');         
 
+// Make an array of strings for each line (each json object)
+// var strLines = str.split("\n");     
 
+function scrapeRestaurantsFrom(city) {
+    var restaurants = [];
 
+    // For each element in the array of strings (array of json objects that are currently strings)
+    strLines.forEach((element) => {
+        var business = JSON.parse(element);   // Turn each element into a real json object - a 'business'
 
+        // If the business is in the given city
+        if(business.city == city) {
+
+            // Get the businesses categories as a string
+            var categoriesString = JSON.stringify(business.categories);
+
+            // If the business is a Restaurant
+            if(categoriesString.includes('Restaurants')){
+                restaurants.push(business);
+            }
+        }
+    });
+
+    return restaurants;
+}
+
+// List of Phoenix restaurants as JSON objects
+// var PhoenixRestaurants = scrapeRestaurantsFrom('Phoenix');
+
+// function restaurantsToString(restaurants) {
+//     var restaurants = [];
+//     restaurants.forEach((jsonObject) => {
+//         var restaurantAsString = JSON.stringify(jsonObject);
+//         restaurants += restaurantAsString;
+//     });
+
+//     return restaurants;
+// }
+
+// var rests = restaurantsToString(PhoenixRestaurants);
+
+// console.log(rests);
+
+function seedDB() {
+
+    var title;
+    var caption;
+    var image;
+    var address;
+    var name;
+    var lat;
+    var long;
+    var author;         // Create a User.js object that is the same for all posts
+    var comments = []   // Create a Comment.js object from the reviews
+
+    PhoenixRestaurants.forEach((JSONobject) => {
+        var newPost = {
+            title: JSONobject.name,
+            caption: '',
+            image: '',
+            address: JSONobject.address + ', ' + JSONobject.city + ', ' + JSONobject.state,
+            name: JSONobject.name,
+            author: null,
+            lat: JSONobject.latitude,
+            lng: JSONobject.longitude
+        };
+
+        // Create a new Post using the object from above and save to DB
+        Post.create(newPost, function(err, post){
+            if(err){
+                // req.flash("error", "Unable to create post.");
+                console.log('Error creating post');
+            } 
+            else{
+                // req.flash("success", "New post successfully added.");
+                console.log('Success, post created');
+            }
+        });
+    });
+
+}
 
 
 
@@ -85,3 +165,5 @@ app.listen(PORT, process.env.IP, function(){
     console.log("Server started on port " + PORT + "..."); 
 });
 // ================================= SERVER ================================= //
+
+// seedDB();
