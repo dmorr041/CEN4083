@@ -28,7 +28,7 @@
                                     <div id="map"></div>
                                 </div>
                                 <div class="spacer"></div>
-                            <% if(currentUser && post.author.id.equals(currentUser._id)){ %>
+                            <% if(currentUser && post.author.id == (currentUser._id)){ %>
                                 <!-- EDIT POST BUTTON -->
                                 <a class="ui icon basic yellow button" href="/allPosts/<%= post._id %>/edit"><i class="edit outline icon"></i>Edit</a>
                                 <!-- DELETE POST BUTTON -->
@@ -57,7 +57,7 @@
                             <div class="text">
                                 <p><%= comment.text %></p>
                             </div>
-                            <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
+                            <% if(currentUser && comment.author.id == (currentUser._id)){ %>
                                 <div class="actions">
                                     <!-- EDIT COMMENT BUTTON -->
                                     <a href="/allPosts/<%= post._id %>/comments/<%= comment._id %>/edit" class="ui icon basic yellow mini button">
