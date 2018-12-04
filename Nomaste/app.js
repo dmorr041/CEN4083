@@ -69,117 +69,118 @@ app.use("/allPosts/:id/comments", commentRoutes);
 
 
 // Read the entire file into a string
-var str = fs.readFileSync('../../yelp_academic_dataset_business.json', 'utf8');         
+// var str = fs.readFileSync('../../yelp_academic_dataset_business.json', 'utf8');         
 
-// Make an array of strings for each line (each json object)
-var strLines = str.split("\n");    
+// // Make an array of strings for each line (each json object)
+// var strLines = str.split("\n");    
 
-var string = fs.readFileSync('../../yelp_academic_dataset_review2.json', 'utf8');
-var stringLines = string.split("\n");
 
-function scrapeReviews() {
-    var reviews = [];
+// var string = fs.readFileSync('../../yelp_academic_dataset_review2.json', 'utf8');
+// var stringLines = string.split("\n");
 
-    stringLines.forEach((element) => {
-        var reviewObj = JSON.parse(element);
-        var review = reviewObj.text;
-        reviews.push(review);
-    });
+// function scrapeReviews() {
+//     var reviews = [];
 
-    return reviews;
-}
+//     stringLines.forEach((element) => {
+//         var reviewObj = JSON.parse(element);
+//         var review = reviewObj.text;
+//         reviews.push(review);
+//     });
 
-var reviews = scrapeReviews();
-// for(var i = 0; i < reviews.length; i++){
-//     console.log(reviews[i]);
+//     return reviews;
 // }
 
-function scrapeRestaurantsFrom(city) {
-    var restaurants = [];
+// var reviews = scrapeReviews();
+// // for(var i = 0; i < reviews.length; i++){
+// //     console.log(reviews[i]);
+// // }
 
-    // For each element in the array of strings (array of json objects that are currently strings)
-    strLines.forEach((element) => {
-        var business = JSON.parse(element);   // Turn each element into a real json object - a 'business'
+// function scrapeRestaurantsFrom(city) {
+//     var restaurants = [];
 
-        // If the business is in the given city
-        if(business.city == city) {
+//     // For each element in the array of strings (array of json objects that are currently strings)
+//     strLines.forEach((element) => {
+//         var business = JSON.parse(element);   // Turn each element into a real json object - a 'business'
 
-            // Get the businesses categories as a string
-            var categoriesString = JSON.stringify(business.categories);
+//         // If the business is in the given city
+//         if(business.city == city) {
 
-            // If the business is a Restaurant
-            if(categoriesString.includes('Restaurants')){
-                restaurants.push(business);
-            }
-        }
-    });
+//             // Get the businesses categories as a string
+//             var categoriesString = JSON.stringify(business.categories);
 
-    return restaurants;
-}
+//             // If the business is a Restaurant
+//             if(categoriesString.includes('Restaurants')){
+//                 restaurants.push(business);
+//             }
+//         }
+//     });
 
-// List of Phoenix restaurants as JSON objects
-var PhoenixRestaurants = scrapeRestaurantsFrom('Phoenix');
+//     return restaurants;
+// }
+
+// // List of Phoenix restaurants as JSON objects
+// var PhoenixRestaurants = scrapeRestaurantsFrom('Phoenix');
 
 
-function seedDB() {
+// function seedDB() {
     
-    User.findOne({ username: 'Darien' }, (err, user) => {
-        if(!user) console.log('no user');
-        else {
-            PhoenixRestaurants.forEach((JSONobject) => {
-                var newPost = {
-                    title: JSONobject.name,
-                    caption: '',
-                    image: 'https://images.pexels.com/photos/359993/pexels-photo-359993.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                    address: JSONobject.address + ', ' + JSONobject.city + ', ' + JSONobject.state,
-                    name: JSONobject.name,
-                    author: user,
-                    lat: JSONobject.latitude,
-                    lng: JSONobject.longitude
-                };
+//     User.findOne({ username: 'Darien' }, (err, user) => {
+//         if(!user) console.log('no user');
+//         else {
+//             PhoenixRestaurants.forEach((JSONobject) => {
+//                 var newPost = {
+//                     title: JSONobject.name,
+//                     caption: '',
+//                     image: 'https://images.pexels.com/photos/359993/pexels-photo-359993.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+//                     address: JSONobject.address + ', ' + JSONobject.city + ', ' + JSONobject.state,
+//                     name: JSONobject.name,
+//                     author: user,
+//                     lat: JSONobject.latitude,
+//                     lng: JSONobject.longitude
+//                 };
         
-                // Create a new Post using the object from above and save to DB
-                Post.create(newPost, function(err, post){
-                    if(err){
-                        // req.flash("error", "Unable to create post.");
-                        console.log('Error creating post');
-                    } 
-                    else{
-                        var j = 0;
-                        for(var i = 0; i < 10; i++){
-                            Comment.create({author: user, text: reviews[j]}, function(err, comment) {
-                                if(err){
-                                    console.log('Error creating comment');
-                                } 
-                                else{
-                                    // Grab the id and username from the post request and store it (associate it) in the comment that is created
-                                    // comment.author.id = user.id;
-                                    // comment.author.username = user.username;
-                                    console.log(comment);
+//                 // Create a new Post using the object from above and save to DB
+//                 Post.create(newPost, function(err, post){
+//                     if(err){
+//                         // req.flash("error", "Unable to create post.");
+//                         console.log('Error creating post');
+//                     } 
+//                     else{
+//                         var j = 0;
+//                         for(var i = 0; i < 10; i++){
+//                             Comment.create({author: user, text: reviews[j]}, function(err, comment) {
+//                                 if(err){
+//                                     console.log('Error creating comment');
+//                                 } 
+//                                 else{
+//                                     // Grab the id and username from the post request and store it (associate it) in the comment that is created
+//                                     // comment.author.id = user.id;
+//                                     // comment.author.username = user.username;
+//                                     console.log(comment);
                                     
-                                    // Save the comment
-                                    comment.save();
+//                                     // Save the comment
+//                                     comment.save();
                                     
-                                    post.comments.push(comment);
+//                                     post.comments.push(comment);
                                     
-                                    // req.flash("success", "Comment successfully added.");
-                                    // res.redirect("/allPosts/" + post._id);
-                                    console.log('success adding comment to post with user Darien');
-                                }
-                            });
-                            if(j < reviews.length){
-                                j++;
-                            }
-                            post.save();
-                        }
+//                                     // req.flash("success", "Comment successfully added.");
+//                                     // res.redirect("/allPosts/" + post._id);
+//                                     console.log('success adding comment to post with user Darien');
+//                                 }
+//                             });
+//                             if(j < reviews.length){
+//                                 j++;
+//                             }
+//                             post.save();
+//                         }
 
                         
-                    }
-                });
-            });
-        }
-    });
-}
+//                     }
+//                 });
+//             });
+//         }
+//     });
+// }
 
 // ================================= SERVER ================================= //
 app.listen(PORT, process.env.IP, function(){
@@ -187,4 +188,4 @@ app.listen(PORT, process.env.IP, function(){
 });
 // ================================= SERVER ================================= //
 
-seedDB();
+// seedDB();
